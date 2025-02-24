@@ -1,61 +1,49 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UnrealSlateAppTemplateApp.h"
-#include "UnrealSlateAppTemplateModule/Public/UnrealSlateAppTemplateModule.h"
 
-#include "Runtime/Launch/Public/RequiredProgramMainCPPInclude.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Framework/Docking/TabManager.h"
-#include "Framework/Docking/WorkspaceItem.h"
-#include "Styling/StarshipCoreStyle.h"
+#include "Runtime/Launch/Public/RequiredProgramMainCPPInclude.h"
+#include "StandaloneRenderer.h"
 
-IMPLEMENT_APPLICATION(UnrealSlateAppTemplate, "UnrealSlateAppTemplate");
+IMPLEMENT_APPLICATION( UnrealSlateAppTemplate, "UnrealSlateAppTemplate" );
 
-#define LOCTEXT_NAMESPACE "UnrealSlateAppTemplate"
+DEFINE_LOG_CATEGORY( UnrealSlateAppTemplate );
 
-namespace WorkspaceMenu
+int RunUnrealSlateAppTemplate( const TCHAR* Commandline )
 {
-	TSharedRef<FWorkspaceItem> DeveloperMenu = FWorkspaceItem::NewGroup(LOCTEXT("DeveloperMenu", "Developer"));
-}
-
-
-int RunUnrealSlateAppTemplate( const TCHAR* CommandLine )
-{
-	FTaskTagScope TaskTagScope(ETaskTag::EGameThread);
+	FTaskTagScope TaskTagScope( ETaskTag::EGameThread );
 
 	// start up the main loop
-	GEngineLoop.PreInit(CommandLine);
+	GEngineLoop.PreInit( Commandline );
 
 	// Make sure all UObject classes are registered and default properties have been initialized
 	ProcessNewlyLoadedUObjects();
-	
+
 	// Tell the module manager it may now process newly-loaded UObjects when new C++ modules are loaded
 	FModuleManager::Get().StartProcessingNewlyLoadedObjects();
 
-	// crank up a normal Slate application using the platform's standalone renderer
-	FSlateApplication::InitializeAsStandaloneApplication(GetStandardStandaloneRenderer());
+	// Crank up a normal Slate application using the platform's standalone renderer
+	FSlateApplication::InitializeAsStandaloneApplication( GetStandardStandaloneRenderer() );
+	FSlateApplication::InitHighDPI( true );
 
-	FSlateApplication::InitHighDPI(true);
+	// Set the application name
+	FGlobalTabmanager::Get()->SetApplicationTitle( FText::FromString( "UnrealSlateAppTemplate" ) );
 
-	// set the application name
-	FGlobalTabmanager::Get()->SetApplicationTitle(LOCTEXT("AppTitle", "UnrealSlateAppTemplate"));
-	FAppStyle::SetAppStyleSetName(FStarshipCoreStyle::GetCoreStyle().GetStyleSetName());
+	// launch the main window of the UnrealSlateAppTemplate application
+	FSlateApplication::Get().AddWindow( SNew( SWindow )[ SNew( STextBlock ).Text( FText::FromString( "Find this in the UnrealSlateAppTemplateApp.cpp to change it" ) ) ] );
 
-	// launch the main window of the UnrealSlateAppTemplate module
-	FUnrealSlateAppTemplateModule& UnrealSlateAppTemplateModule = FModuleManager::LoadModuleChecked<FUnrealSlateAppTemplateModule>(FName("UnrealSlateAppTemplateModule"));
-	UnrealSlateAppTemplateModule.AppStarted();
-	
-	// loop while the server does the rest
-	while (!IsEngineExitRequested())
+	while( !IsEngineExitRequested() )
 	{
 		BeginExitIfRequested();
 
-		FTaskGraphInterface::Get().ProcessThreadUntilIdle(ENamedThreads::GameThread);
-		FStats::AdvanceFrame(false);
-		FTSTicker::GetCoreTicker().Tick(FApp::GetDeltaTime());
+		FTaskGraphInterface::Get().ProcessThreadUntilIdle( ENamedThreads::GameThread );
+		FStats::AdvanceFrame( false );
+		FTSTicker::GetCoreTicker().Tick( FApp::GetDeltaTime() );
 		FSlateApplication::Get().PumpMessages();
 		FSlateApplication::Get().Tick();
-		FPlatformProcess::Sleep(0.01);
+		FPlatformProcess::Sleep( 0.01 );
 
 		GFrameCounter++;
 	}
@@ -69,5 +57,3 @@ int RunUnrealSlateAppTemplate( const TCHAR* CommandLine )
 
 	return 0;
 }
-
-#undef LOCTEXT_NAMESPACE

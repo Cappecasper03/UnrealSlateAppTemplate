@@ -5,12 +5,14 @@ using UnrealBuildTool;
 
 public class UnrealSlateAppTemplate : ModuleRules
 {
-	public UnrealSlateAppTemplate(ReadOnlyTargetRules Target) : base(Target)
+	public UnrealSlateAppTemplate( ReadOnlyTargetRules Target ) : base( Target )
 	{
-		PublicIncludePaths.Add(Path.Combine(EngineDirectory, "Source", "Runtime/Launch/Public"));
+		PublicIncludePaths.Add( Path.Combine( EngineDirectory,  "Source", "Runtime/Launch/Public" ) );
+		PrivateIncludePaths.Add( Path.Combine( EngineDirectory, "Source", "Runtime/Launch/Private" ) );
 
 		PrivateDependencyModuleNames.AddRange(
-			new string[] {
+			new string[]
+			{
 				"AppFramework",
 				"Core",
 				"ApplicationCore",
@@ -21,22 +23,11 @@ public class UnrealSlateAppTemplate : ModuleRules
 			}
 		);
 
-		PrivateIncludePaths.Add(Path.Combine(EngineDirectory, "Source", "Runtime/Launch/Private"));		// For LaunchEngineLoop.cpp include
-
-		if (Target.Platform == UnrealTargetPlatform.IOS || Target.Platform == UnrealTargetPlatform.TVOS)
+		if( Target.IsInPlatformGroup( UnrealPlatformGroup.Linux ) )
 		{
 			PrivateDependencyModuleNames.AddRange(
-                new string [] {
-                    "NetworkFile",
-                    "StreamingFile"
-                }
-            );
-		}
-
-		if (Target.IsInPlatformGroup(UnrealPlatformGroup.Linux))
-		{
-			PrivateDependencyModuleNames.AddRange(
-				new string[] {
+				new string[]
+				{
 					"UnixCommonStartup"
 				}
 			);
