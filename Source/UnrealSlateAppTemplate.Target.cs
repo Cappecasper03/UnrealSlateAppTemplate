@@ -17,13 +17,10 @@ public sealed class UnrealSlateAppTemplateTarget : TargetRules
 
 		bCompileAgainstEngine      = false;
 		bCompileAgainstCoreUObject = true;
-
-		bUseLoggingInShipping = false;
-		bHasExports           = false;
-		bUseChecksInShipping  = false;
-
-		bBuildDeveloperTools = false;
-
-		bEnableTrace = true;
+		bUseLoggingInShipping      = false;
+		bUseChecksInShipping       = false;
+		bHasExports                = false;
+		bBuildDeveloperTools       = false;
+		bEnableTrace               = true;
 	}
 }
