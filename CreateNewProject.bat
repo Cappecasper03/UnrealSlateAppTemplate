@@ -12,9 +12,7 @@ if errorlevel 1 (
     goto:eof
 )
 
-cd Tools/TemplateNamer/
-
-python TemplateNamer.py -i
+python Tools/TemplateNamer/TemplateNamer.py -i
 
 popd
 
