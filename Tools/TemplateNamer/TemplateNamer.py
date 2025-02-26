@@ -127,12 +127,9 @@ def create_empty_slate_project(name, path):
     else:
         print("D+ Successfully created the directory %s " % target_root)
 
-    # detect the current working directory and print it
-    tool_path = os.getcwd()
-    template_path = os.path.join(tool_path, "../../")
-
-    is_success = iterate_by_dir_content(os.path.join(template_path, "Source"), target_root, name)
-    is_success &= read_src_and_write_dst_file(os.path.join(template_path, f'{key_replacing_name}.uproject'), target_root, name)
+    is_success = iterate_by_dir_content(os.path.join(os.getcwd(), "Source"), target_root, name)
+    is_success &= read_src_and_write_dst_file(os.path.join(os.getcwd(), f'{key_replacing_name}.uproject'), target_root, name)
+    is_success &= read_src_and_write_dst_file(os.path.join(os.getcwd(), '.gitignore'), target_root, name)
 
     return is_success
 
@@ -141,6 +138,7 @@ def main(argv):
     name, path = parse_args(argv)
     print(f'--- Creating "{name}" to "{path}"...')
     if create_empty_slate_project(name, path):
+        os.system(f'cd {path}/{name} && git init')
         print(f'--- Done! ---')
     else:
         print(f'--- Failed. ---')
