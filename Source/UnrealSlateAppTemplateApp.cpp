@@ -11,21 +11,27 @@ IMPLEMENT_APPLICATION( UnrealSlateAppTemplate, "UnrealSlateAppTemplate" );
 
 DEFINE_LOG_CATEGORY( UnrealSlateAppTemplate );
 
-int RunUnrealSlateAppTemplate( const TCHAR* Commandline )
+int RunUnrealSlateAppTemplate( const TCHAR* InCommandline )
 {
 	FTaskTagScope TaskTagScope( ETaskTag::EGameThread );
 
-	// Flags this program as staged sos that the saved folder is inside the project directory
-	const TCHAR* Filename   = *FPaths::Combine( FPaths::EngineConfigDir(), FString::Printf( TEXT( "StagedBuild_%s.ini" ), FApp::GetProjectName() ) );
-	FArchive*    FileWriter = IFileManager::Get().CreateFileWriter( Filename );
-	if( FileWriter )
+#if !( UE_BUILD_SHIPPING )
+	// If "-waitforattach" or "-WaitForDebugger" was specified, halt startup and wait for a debugger to attach before continuing
+	if( FParse::Param( InCommandline, TEXT( "waitforattach" ) ) || FParse::Param( InCommandline, TEXT( "WaitForDebugger" ) ) )
 	{
-		FileWriter->Close();
-		delete FileWriter;
+		while( !FPlatformMisc::IsDebuggerPresent() ) {}
+		UE_DEBUG_BREAK();
 	}
+#endif
+
+#if !( UE_GAME )
+	// Flags this program as staged so that the saved folder is inside the project directory
+	const FString Filename = FPaths::Combine( FPaths::EngineConfigDir(), FString::Printf( TEXT( "StagedBuild_%s.ini" ), FApp::GetProjectName() ) );
+	FFileHelper::SaveStringToFile( Filename, *Filename );
+#endif
 
 	// start up the main loop
-	GEngineLoop.PreInit( Commandline );
+	GEngineLoop.PreInit( InCommandline );
 
 	// Make sure all UObject classes are registered and default properties have been initialized
 	ProcessNewlyLoadedUObjects();
@@ -70,6 +76,12 @@ int RunUnrealSlateAppTemplate( const TCHAR* Commandline )
 
 		TRACE_END_FRAME( TraceFrameType_Game );
 	}
+
+#if !( UE_GAME )
+	IFileManager::Get().Delete( *Filename );
+#endif
+
+	RequestEngineExit( TEXT( "RunUnrealSlateAppTemplate RequestExit" ) );
 
 	FCoreDelegates::OnExit.Broadcast();
 	FSlateApplication::Shutdown();

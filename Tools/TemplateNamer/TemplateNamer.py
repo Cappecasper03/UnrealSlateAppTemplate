@@ -130,6 +130,7 @@ def create_empty_slate_project(name, path):
     is_success = iterate_by_dir_content(os.path.join(os.getcwd(), "Source"), target_root, name)
     is_success &= read_src_and_write_dst_file(os.path.join(os.getcwd(), f'{key_replacing_name}.uproject'), target_root, name)
     is_success &= read_src_and_write_dst_file(os.path.join(os.getcwd(), '.gitignore'), target_root, name)
+    is_success &= read_src_and_write_dst_file(os.path.join(os.getcwd(), '.clang-format'), target_root, name)
 
     return is_success
 
