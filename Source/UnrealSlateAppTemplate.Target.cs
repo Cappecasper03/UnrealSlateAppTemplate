@@ -2,11 +2,11 @@
 
 using UnrealBuildTool;
 
-[SupportedPlatforms( "Win64", "Linux" )]
-[SupportedConfigurations( UnrealTargetConfiguration.Debug, UnrealTargetConfiguration.Development, UnrealTargetConfiguration.Shipping )]
+[SupportedPlatforms("Win64", "Linux")]
+[SupportedConfigurations(UnrealTargetConfiguration.Debug, UnrealTargetConfiguration.Development, UnrealTargetConfiguration.Shipping)]
 public sealed class UnrealSlateAppTemplateTarget : TargetRules
 {
-	public UnrealSlateAppTemplateTarget( TargetInfo Target ) : base( Target )
+	public UnrealSlateAppTemplateTarget(TargetInfo Target) : base(Target)
 	{
 		Type                 = TargetType.Program;
 		LinkType             = TargetLinkType.Monolithic;

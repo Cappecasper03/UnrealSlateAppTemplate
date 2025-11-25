@@ -5,10 +5,10 @@ using UnrealBuildTool;
 
 public class UnrealSlateAppTemplate : ModuleRules
 {
-	public UnrealSlateAppTemplate( ReadOnlyTargetRules Target ) : base( Target )
+	public UnrealSlateAppTemplate(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PublicIncludePaths.Add( Path.Combine( EngineDirectory,  "Source", "Runtime/Launch/Public" ) );
-		PrivateIncludePaths.Add( Path.Combine( EngineDirectory, "Source", "Runtime/Launch/Private" ) );
+		PublicIncludePaths.Add(Path.Combine(EngineDirectory, "Source", "Runtime/Launch/Public"));
+		PrivateIncludePaths.Add(Path.Combine(EngineDirectory, "Source", "Runtime/Launch/Private"));
 
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
@@ -23,7 +23,7 @@ public class UnrealSlateAppTemplate : ModuleRules
 			}
 		);
 
-		if( Target.IsInPlatformGroup( UnrealPlatformGroup.Linux ) )
+		if(Target.IsInPlatformGroup(UnrealPlatformGroup.Linux))
 		{
 			PrivateDependencyModuleNames.AddRange(
 				new string[]

@@ -5,8 +5,8 @@
 	"Description": "",
 	"Modules": [
 		{
-			"Name": "EmptyProject",
-			"Type": "Runtime",
+			"Name": "UnrealSlateAppTemplate",
+			"Type": "Program",
 			"LoadingPhase": "Default"
 		}
 	]
