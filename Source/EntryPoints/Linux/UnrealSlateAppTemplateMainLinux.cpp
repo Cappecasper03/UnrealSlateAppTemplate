@@ -2,9 +2,11 @@
 
 #include "UnrealSlateAppTemplateApp.h"
 
+#if PLATFORM_LINUX
 #include "UnixCommonStartup.h"
 
-int main( int argc, char* argv[] )
+int main( int argc, char* argv[ ] )
 {
 	return CommonUnixMain( argc, argv, &RunUnrealSlateAppTemplate );
 }
+#endif

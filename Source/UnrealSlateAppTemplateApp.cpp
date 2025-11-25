@@ -2,10 +2,11 @@
 
 #include "UnrealSlateAppTemplateApp.h"
 
+#include "StandaloneRenderer.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Framework/Docking/TabManager.h"
+#include "Main/SMainWindow.h"
 #include "Runtime/Launch/Public/RequiredProgramMainCPPInclude.h"
-#include "StandaloneRenderer.h"
 
 IMPLEMENT_APPLICATION( UnrealSlateAppTemplate, "UnrealSlateAppTemplate" );
 
@@ -15,20 +16,20 @@ int RunUnrealSlateAppTemplate( const TCHAR* InCommandline )
 {
 	FTaskTagScope TaskTagScope( ETaskTag::EGameThread );
 
-#if !( UE_BUILD_SHIPPING )
+	#if !( UE_BUILD_SHIPPING )
 	// If "-waitforattach" or "-WaitForDebugger" was specified, halt startup and wait for a debugger to attach before continuing
 	if( FParse::Param( InCommandline, TEXT( "waitforattach" ) ) || FParse::Param( InCommandline, TEXT( "WaitForDebugger" ) ) )
 	{
 		while( !FPlatformMisc::IsDebuggerPresent() ) {}
 		UE_DEBUG_BREAK();
 	}
-#endif
+	#endif
 
-#if !( UE_GAME )
+	#if !( UE_GAME )
 	// Flags this program as staged so that the saved folder is inside the project directory
 	const FString Filename = FPaths::Combine( FPaths::EngineConfigDir(), FString::Printf( TEXT( "StagedBuild_%s.ini" ), FApp::GetProjectName() ) );
 	FFileHelper::SaveStringToFile( Filename, *Filename );
-#endif
+	#endif
 
 	// start up the main loop
 	GEngineLoop.PreInit( InCommandline );
@@ -47,7 +48,7 @@ int RunUnrealSlateAppTemplate( const TCHAR* InCommandline )
 	FGlobalTabmanager::Get()->SetApplicationTitle( FText::FromString( "UnrealSlateAppTemplate" ) );
 
 	// launch the main window of the UnrealSlateAppTemplate application
-	FSlateApplication::Get().AddWindow( SNew( SWindow )[ SNew( STextBlock ).Text( FText::FromString( "Find this in the UnrealSlateAppTemplateApp.cpp to change it" ) ) ] );
+	FSlateApplication::Get().AddWindow( SNew( SMainWindow ) );
 
 	while( !IsEngineExitRequested() )
 	{
@@ -61,7 +62,7 @@ int RunUnrealSlateAppTemplate( const TCHAR* InCommandline )
 		FApp::UpdateLastTime();
 
 		FTaskGraphInterface::Get().ProcessThreadUntilIdle( ENamedThreads::GameThread );
-		FStats::AdvanceFrame( false );
+		UE::Stats::FStats::AdvanceFrame( false );
 		FTSTicker::GetCoreTicker().Tick( FApp::GetDeltaTime() );
 		FSlateApplication::Get().PumpMessages();
 		FSlateApplication::Get().Tick();
@@ -77,9 +78,9 @@ int RunUnrealSlateAppTemplate( const TCHAR* InCommandline )
 		TRACE_END_FRAME( TraceFrameType_Game );
 	}
 
-#if !( UE_GAME )
+	#if !( UE_GAME )
 	IFileManager::Get().Delete( *Filename );
-#endif
+	#endif
 
 	RequestEngineExit( TEXT( "RunUnrealSlateAppTemplate RequestExit" ) );
 
